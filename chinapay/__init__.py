@@ -117,7 +117,7 @@ class Chinapay(object):
         )
 
     def check_signature(self, params):
-        return _check_signature(params, self.api_key)
+        return _check_signature(params, self.cert_file, self.password)
 
     def parse_payment_result(self, data):
         """解析支付结果通知"""

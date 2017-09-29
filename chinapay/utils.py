@@ -8,6 +8,7 @@
     :copyright: (c) 2014 by messense.
     :license: MIT, see LICENSE for more details.
 """
+import ctypes
 import string
 import copy
 import hashlib
