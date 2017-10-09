@@ -8,7 +8,7 @@ from optionaldict import optionaldict
 
 from chinapay.exceptions import ChinapayException, InvalidSignatureException
 from chinapay.utils import (
-    random_string, calculate_signature, _check_signature, dict_to_xml
+    random_string, calculate_signature, check_signature, dict_to_xml
 )
 from chinapay.base import BaseChinapayAPI
 from chinapay import api
@@ -53,8 +53,8 @@ class Chinapay(object):
     refund = api.Refund()
     """退款接口"""
 
-    API_BASE_URL = 'https://api.mch.weixin.qq.com/'
-    API_BASE_TEST_URL = 'https://api.mch.weixin.qq.com/'
+    API_BASE_URL = 'https://cb.chinapay.com/'
+    API_BASE_TEST_URL = 'http://112.65.158.89/'
 
     def __new__(cls, *args, **kwargs):
         self = super(Chinapay, cls).__new__(cls)
@@ -65,14 +65,16 @@ class Chinapay(object):
             setattr(self, name, _api)
         return self
 
-    def __init__(self, cert_file, password, test=False):
+    def __init__(self, mer_id, cert_file, password, test=False):
         """
+        :param mer_id: chinapay 分配的商户 id
         :param cert_file:
         :param password:
         :param debug: 
     
         """
         self.cert_file = cert_file
+        self.mer_id = mer_id
         self.password = password
         self.test = test
         if self.test:
@@ -110,6 +112,7 @@ class Chinapay(object):
         )
 
     def post(self, url, **kwargs):
+        kwargs['data']['Signature'] = calculate_signature(kwargs['data'], self.cert_file, self.password)
         return self._request(
             method='post',
             url_or_endpoint=url,
@@ -117,7 +120,7 @@ class Chinapay(object):
         )
 
     def check_signature(self, params):
-        return _check_signature(params, self.cert_file, self.password)
+        return check_signature(params, self.cert_file, self.password)
 
     def parse_payment_result(self, data):
         """解析支付结果通知"""

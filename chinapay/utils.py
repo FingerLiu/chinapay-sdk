@@ -51,6 +51,12 @@ class ChinapaySigner(object):
         return hashlib.sha1(str_to_sign).hexdigest()
 
 
+def calculate_signature(signature, cert_file, password):
+    # TODO calc signature
+    pass
+
+
+
 def check_signature(token, signature, timestamp, nonce):
     # TODO check signature
     pass
